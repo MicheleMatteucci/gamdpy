@@ -181,6 +181,26 @@ class Lin(BaseScheduler):
         return stepcheck
 
 
+class LinZones(BaseScheduler):
+
+    def __init__(self, steps_between, steps_per_zone):
+        assert steps_between > steps_per_zone
+        super().__init__()
+        self.steps_between = steps_between
+        self.steps_per_zone = steps_per_zone
+        self.kwargs = self.get_kwargs()
+
+    def _get_stepcheck(self):
+        self.deltastep = self.steps_between
+        deltastep = self.deltastep
+        steps_per_zone = self.steps_per_zone
+        def stepcheck(step):
+            if step%deltastep < steps_per_zone:
+                return True, step//deltastep*steps_per_zone + step%deltastep
+            return False, -1
+        return stepcheck
+
+
 class Geom(BaseScheduler):
 
     def __init__(self, npoints):
